@@ -20,5 +20,5 @@ optional arguments:
 ## Requirements
 
 - Python 3
-- Beautiful Soup
 - Python Selenium
+- Geckodriver
