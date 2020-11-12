@@ -1,6 +1,8 @@
 # xcurl
 xcurl gets the HTML from dynamic webpages where curl fails
 
+[![Build Status](https://travis-ci.org/ricardobranco777/xcurl.svg?branch=master)](https://travis-ci.org/ricardobranco777/xcurl)
+
 ## Usage:
 
 ```
