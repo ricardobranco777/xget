@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+"""
+Get html from dynamic pages
+"""
+
+import argparse
+import os
+import sys
+import time
+
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+
+
+def get(url, timeout):
+    """
+    Get url
+    """
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    with webdriver.Firefox(options=options, service_log_path=os.devnull) as browser:
+        try:
+            browser.get(url)
+        except WebDriverException as err:
+            sys.exit("ERROR: %s" % err)
+        time.sleep(timeout)
+        print(browser.page_source)
+
+
+def parse_opts():
+    """
+    Parse options and arguments
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-t', '--timeout', type=int, default=2,
+        help="Timeout in seconds")
+    parser.add_argument('url')
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    opts = parse_opts()
+    try:
+        get(opts.url, opts.timeout)
+    except KeyboardInterrupt:
+        sys.exit(1)
