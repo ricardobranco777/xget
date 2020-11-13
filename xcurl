@@ -12,18 +12,25 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 
-def get(url, timeout):
+def get(url):
     """
     Get url
     """
     options = webdriver.FirefoxOptions()
     options.headless = True
-    with webdriver.Firefox(options=options, service_log_path=os.devnull) as browser:
+    profile = webdriver.FirefoxProfile()
+    if opts.insecure:
+        profile.accept_untrusted_certs = True
+        profile.assume_untrusted_cert_issuer = True
+    with webdriver.Firefox(
+            options=options,
+            firefox_profile=profile,
+            service_log_path=os.devnull) as browser:
         try:
             browser.get(url)
         except WebDriverException as err:
             sys.exit("ERROR: %s" % err)
-        time.sleep(timeout)
+        time.sleep(opts.timeout)
         print(browser.page_source)
 
 
@@ -32,7 +39,12 @@ def parse_opts():
     Parse options and arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--timeout', type=int, default=2, help="Timeout in seconds")
+    parser.add_argument(
+        '--insecure', action='store_true',
+        help="Allow insecure server connections when using SSL")
+    parser.add_argument(
+        '-t', '--timeout', type=int, default=2,
+        help="Timeout in seconds")
     parser.add_argument('url')
     return parser.parse_args()
 
@@ -40,6 +52,6 @@ def parse_opts():
 if __name__ == "__main__":
     opts = parse_opts()
     try:
-        get(opts.url, opts.timeout)
+        get(opts.url)
     except KeyboardInterrupt:
         sys.exit(1)

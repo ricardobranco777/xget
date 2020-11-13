@@ -1,3 +1,3 @@
 test:
 	@pylint xcurl
-	@flake8 xcurl --ignore=E501
+	@flake8 xcurl
