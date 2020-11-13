@@ -18,6 +18,8 @@ def get(url):
     """
     options = webdriver.FirefoxOptions()
     options.headless = True
+    if opts.user_agent is not None:
+        options.set_preference("general.useragent.override", opts.user_agent)
     profile = webdriver.FirefoxProfile()
     if opts.insecure:
         profile.accept_untrusted_certs = True
@@ -49,6 +51,9 @@ def parse_opts():
     parser.add_argument(
         '-t', '--timeout', type=int, default=2,
         help="Timeout in seconds")
+    parser.add_argument(
+        '-U', '--user-agent',
+        help="User agent")
     parser.add_argument('url')
     return parser.parse_args()
 

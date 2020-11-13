@@ -17,6 +17,8 @@ optional arguments:
   --insecure            Allow insecure server connections when using SSL
   -t TIMEOUT, --timeout TIMEOUT
                         Timeout in seconds
+  -U USER_AGENT, --user-agent USER_AGENT
+                        User agent
 ```
 
 ## Requirements
