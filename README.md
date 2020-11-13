@@ -13,6 +13,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --debug               Enable debug
   --insecure            Allow insecure server connections when using SSL
   -t TIMEOUT, --timeout TIMEOUT
                         Timeout in seconds

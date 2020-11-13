@@ -25,7 +25,8 @@ def get(url):
     with webdriver.Firefox(
             options=options,
             firefox_profile=profile,
-            service_log_path=os.devnull) as browser:
+            service_log_path=None if opts.debug else os.devnull
+    ) as browser:
         try:
             browser.get(url)
         except WebDriverException as err:
@@ -39,6 +40,9 @@ def parse_opts():
     Parse options and arguments
     """
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--debug', action='store_true',
+        help="Enable debug")
     parser.add_argument(
         '--insecure', action='store_true',
         help="Allow insecure server connections when using SSL")
