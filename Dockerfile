@@ -8,7 +8,7 @@ RUN	apk add --no-cache \
 
 RUN	pip install --no-cache-dir -r /tmp/requirements.txt
 
-RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
+RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
 
 COPY	xcurl /
 
