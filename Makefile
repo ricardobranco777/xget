@@ -1,3 +1,3 @@
 test:
-	@pylint xcurl
-	@flake8 xcurl
+	@pylint xget
+	@flake8 xget

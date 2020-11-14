@@ -10,7 +10,7 @@ RUN	pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
 
-COPY	xcurl /
+COPY	xget /
 
 ENV     PYTHONPATH .
 ENV	PYTHONUNBUFFERED 1
@@ -19,4 +19,4 @@ RUN	adduser -D user
 WORKDIR	/home/test
 USER	user
 
-ENTRYPOINT ["/xcurl"]
+ENTRYPOINT ["/xget"]

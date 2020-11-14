@@ -1,12 +1,12 @@
-# xcurl
-xcurl gets the HTML from dynamic webpages where curl fails
+# xget
+xget gets the HTML from dynamic webpages where curl fails
 
-[![Build Status](https://travis-ci.org/ricardobranco777/xcurl.svg?branch=master)](https://travis-ci.org/ricardobranco777/xcurl)
+[![Build Status](https://travis-ci.org/ricardobranco777/xget.svg?branch=master)](https://travis-ci.org/ricardobranco777/xget)
 
 ## Usage:
 
 ```
-usage: xcurl [-h] [--debug] [--insecure] [-O OUTPUT] [-t TIMEOUT] [-U USER_AGENT] url [url ...]
+usage: xget [-h] [--debug] [--insecure] [-O OUTPUT] [-t TIMEOUT] [-U USER_AGENT] url [url ...]
 
 positional arguments:
   url
