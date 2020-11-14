@@ -6,7 +6,7 @@ xcurl gets the HTML from dynamic webpages where curl fails
 ## Usage:
 
 ```
-usage: xcurl [-h] [-t TIMEOUT] url
+usage: xcurl [-h] [--debug] [--insecure] [-O OUTPUT] [-t TIMEOUT] [-U USER_AGENT] url [url ...]
 
 positional arguments:
   url

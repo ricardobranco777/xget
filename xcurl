@@ -50,7 +50,7 @@ def main():
             firefox_profile=profile,
             service_log_path=None if opts.debug else os.devnull
     ) as browser:
-        for url in opts.urls:
+        for url in opts.url:
             get(browser, url)
 
 
@@ -74,7 +74,7 @@ def parse_opts():
     parser.add_argument(
         '-U', '--user-agent',
         help="User agent")
-    parser.add_argument('urls', nargs='+')
+    parser.add_argument('url', nargs='+')
     return parser.parse_args()
 
 
