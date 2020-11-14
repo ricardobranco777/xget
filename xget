@@ -80,10 +80,11 @@ def parse_opts():
 
 if __name__ == "__main__":
     opts = parse_opts()
-    if opts.output == "-":
-        opts.output = sys.stdout
-    else:
-        opts.output = open(opts.output, "a")
+    if opts.output:
+        if opts.output == "-":
+            opts.output = sys.stdout
+        else:
+            opts.output = open(opts.output, "a")
     try:
         main()
     except KeyboardInterrupt:
