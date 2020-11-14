@@ -8,35 +8,20 @@ import os
 import sys
 import time
 
+from concurrent.futures import ProcessPoolExecutor as Executor
 from urllib.parse import urlparse
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 
-def get(browser, url):
+def get(url):
     """
     Get url
     """
     if not urlparse(url).scheme:
         url = "https://%s" % url
     filename = os.path.basename(urlparse(url).path) or "index.html"
-    try:
-        browser.get(url)
-    except WebDriverException as err:
-        sys.exit("ERROR: %s" % err)
-    time.sleep(opts.timeout)
-    if opts.output:
-        opts.output.write(browser.page_source)
-    else:
-        with open(filename, "w") as file:
-            file.write(browser.page_source)
-
-
-def main():
-    """
-    Main function
-    """
     options = webdriver.FirefoxOptions()
     options.headless = True
     if opts.user_agent is not None:
@@ -50,8 +35,24 @@ def main():
             firefox_profile=profile,
             service_log_path=None if opts.debug else os.devnull
     ) as browser:
-        for url in opts.url:
-            get(browser, url)
+        try:
+            browser.get(url)
+        except WebDriverException as err:
+            sys.exit("ERROR: %s" % err)
+        time.sleep(opts.timeout)
+        if opts.output:
+            opts.output.write(browser.page_source)
+        else:
+            with open(filename, "w") as file:
+                file.write(browser.page_source)
+
+
+def main():
+    """
+    Main function
+    """
+    with Executor() as executor:
+        executor.map(get, opts.url)
 
 
 def parse_opts():
