@@ -8,13 +8,31 @@ import os
 import sys
 import time
 
+from urllib.parse import urlparse
+
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 
-def get(url):
+def get(browser, url):
     """
     Get url
+    """
+    if not urlparse(url).scheme:
+        url = "https://%s" % url
+    filename = os.path.basename(urlparse(url).path) or "index.html"
+    try:
+        browser.get(url)
+    except WebDriverException as err:
+        sys.exit("ERROR: %s" % err)
+    time.sleep(opts.timeout)
+    with open(filename, "w") as file:
+        file.write(browser.page_source)
+
+
+def main():
+    """
+    Main function
     """
     options = webdriver.FirefoxOptions()
     options.headless = True
@@ -29,12 +47,8 @@ def get(url):
             firefox_profile=profile,
             service_log_path=None if opts.debug else os.devnull
     ) as browser:
-        try:
-            browser.get(url)
-        except WebDriverException as err:
-            sys.exit("ERROR: %s" % err)
-        time.sleep(opts.timeout)
-        print(browser.page_source)
+        for url in opts.urls:
+            get(browser, url)
 
 
 def parse_opts():
@@ -54,13 +68,13 @@ def parse_opts():
     parser.add_argument(
         '-U', '--user-agent',
         help="User agent")
-    parser.add_argument('url')
+    parser.add_argument('urls', nargs='+')
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     opts = parse_opts()
     try:
-        get(opts.url)
+        main()
     except KeyboardInterrupt:
         sys.exit(1)
