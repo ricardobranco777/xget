@@ -22,7 +22,6 @@ def get(url):
     """
     if not urlparse(url).scheme:
         url = "https://%s" % url
-    filename = os.path.basename(urlparse(url).path) or "index.html"
     options = webdriver.FirefoxOptions()
     options.headless = True
     if opts.user_agent is not None:
@@ -44,6 +43,7 @@ def get(url):
         if opts.output:
             opts.output.write(browser.page_source)
         else:
+            filename = os.path.basename(urlparse(url).path) or "index.html"
             if re.match("<(!DOCTYPE )?html", browser.page_source, re.I) and \
                     not re.search(r"\.html?$", url, re.I):
                 filename = "%s.html" % filename
