@@ -4,6 +4,7 @@ Get html from dynamic pages
 """
 
 import argparse
+import re
 import os
 import sys
 import time
@@ -43,6 +44,9 @@ def get(url):
         if opts.output:
             opts.output.write(browser.page_source)
         else:
+            if re.match("<(!DOCTYPE )?html", browser.page_source, re.I) and \
+                    not re.search(r"\.html?$", url, re.I):
+                filename = "%s.html" % filename
             with open(filename, "w") as file:
                 file.write(browser.page_source)
 
