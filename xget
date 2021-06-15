@@ -59,7 +59,7 @@ def main():
         if opts.output == "-":
             opts.output = sys.stdout
         else:
-            opts.output = open(opts.output, "a")
+            opts.output = open(opts.output, "a")  # pylint: disable=consider-using-with
     with Executor() as executor:
         executor.map(get, opts.url)
 
