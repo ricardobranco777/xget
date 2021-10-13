@@ -21,7 +21,7 @@ def get(url):
     Get url
     """
     if not urlparse(url).scheme:
-        url = "https://%s" % url
+        url = f"https://{url}"
     options = webdriver.FirefoxOptions()
     options.headless = True
     if opts.user_agent is not None:
@@ -38,7 +38,7 @@ def get(url):
         try:
             browser.get(url)
         except WebDriverException as err:
-            sys.exit("ERROR: %s" % err)
+            sys.exit(f"ERROR: {err}")
         time.sleep(opts.timeout)
         if opts.output:
             opts.output.write(browser.page_source)
@@ -46,8 +46,8 @@ def get(url):
             filename = os.path.basename(urlparse(url).path) or "index.html"
             if re.match("<(!DOCTYPE )?html", browser.page_source, re.I) and \
                     not re.search(r"\.html?$", url, re.I):
-                filename = "%s.html" % filename
-            with open(filename, "w") as file:
+                filename = f"{filename}.html"
+            with open(filename, "w", encoding="utf-8") as file:
                 file.write(browser.page_source)
 
 
@@ -59,7 +59,7 @@ def main():
         if opts.output == "-":
             opts.output = sys.stdout
         else:
-            opts.output = open(opts.output, "a")  # pylint: disable=consider-using-with
+            opts.output = open(opts.output, "a", encoding="utf-8")  # pylint: disable=consider-using-with
     with Executor() as executor:
         executor.map(get, opts.url)
 
