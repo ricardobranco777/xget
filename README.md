@@ -1,5 +1,5 @@
 # xget
-xget gets the HTML from dynamic webpages where curl fails
+xget gets the HTML from dynamic webpages where curl & wget fail
 
 [![Build Status](https://travis-ci.com/ricardobranco777/xget.svg?branch=master)](https://travis-ci.org/ricardobranco777/xget)
 
