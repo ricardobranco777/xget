@@ -1,4 +1,4 @@
-FROM	python:3.10-alpine
+FROM	python:3.11-alpine
 
 COPY    requirements.txt /tmp
 
@@ -13,7 +13,7 @@ RUN	apk --no-cache --virtual .build-deps add \
 	pip install --no-cache-dir -r /tmp/requirements.txt && \
         apk del .build-deps
 
-RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
+RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
 
 COPY	xget /
 
