@@ -23,17 +23,13 @@ def get(url):
     if not urlparse(url).scheme:
         url = f"https://{url}"
     options = webdriver.FirefoxOptions()
-    options.headless = True
+    options.add_argument("--headless")
     if opts.user_agent is not None:
         options.set_preference("general.useragent.override", opts.user_agent)
-    profile = webdriver.FirefoxProfile()
     if opts.insecure:
-        profile.accept_untrusted_certs = True
-        profile.assume_untrusted_cert_issuer = True
+        options.accept_untrusted_certs = True
     with webdriver.Firefox(
             options=options,
-            firefox_profile=profile,
-            service_log_path=None if opts.debug else os.devnull
     ) as browser:
         try:
             browser.get(url)
