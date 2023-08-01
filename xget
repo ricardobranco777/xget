@@ -10,6 +10,7 @@ import sys
 import time
 
 from concurrent.futures import ProcessPoolExecutor as Executor
+from subprocess import DEVNULL
 from urllib.parse import urlparse
 
 from selenium import webdriver
@@ -22,6 +23,7 @@ def get(url):
     """
     if not urlparse(url).scheme:
         url = f"https://{url}"
+    service = webdriver.firefox.service.Service(log_output=DEVNULL)
     options = webdriver.FirefoxOptions()
     options.add_argument("--headless")
     if opts.user_agent is not None:
@@ -30,6 +32,7 @@ def get(url):
         options.accept_untrusted_certs = True
     with webdriver.Firefox(
             options=options,
+            service=service,
     ) as browser:
         try:
             browser.get(url)
