@@ -1,7 +1,7 @@
+![Build Status](https://github.com/ricardobranco777/xget/actions/workflows/ci.yml/badge.svg)
+
 # xget
 xget gets the HTML from dynamic webpages where curl & wget fail
-
-[![Build Status](https://travis-ci.com/ricardobranco777/xget.svg?branch=master)](https://travis-ci.org/ricardobranco777/xget)
 
 ## Usage:
 
