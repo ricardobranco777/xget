@@ -25,6 +25,6 @@ optional arguments:
 
 ## Requirements
 
-- Python 3.7+
+- Tested on Python 3.8+
 - Python Selenium
 - Geckodriver

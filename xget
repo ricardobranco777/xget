@@ -6,45 +6,45 @@ Get html from dynamic pages
 import argparse
 import re
 import os
+import shutil
 import sys
 import time
 
-from concurrent.futures import ProcessPoolExecutor as Executor
+from concurrent.futures import ThreadPoolExecutor
 from subprocess import DEVNULL
 from urllib.parse import urlparse
 
-from selenium import webdriver
+from selenium.webdriver import firefox
 from selenium.common.exceptions import WebDriverException
 
 
-def get(url):
+def xget(url, insecure=False, user_agent=None, timeout=5, output_file=None):
     """
     Get url
     """
     if not urlparse(url).scheme:
         url = f"https://{url}"
-    service = webdriver.firefox.service.Service(log_output=DEVNULL)
-    options = webdriver.FirefoxOptions()
+    service = firefox.service.Service(log_output=DEVNULL)
+    options = firefox.options.Options()
     options.add_argument("--headless")
-    if opts.user_agent is not None:
-        options.set_preference("general.useragent.override", opts.user_agent)
-    if opts.insecure:
-        options.accept_untrusted_certs = True
-    with webdriver.Firefox(
+    if user_agent is not None:
+        options.set_preference("general.useragent.override", user_agent)
+    options.accept_untrusted_certs = insecure
+    with firefox.webdriver.WebDriver(
             options=options,
-            service=service,
+            service=service
     ) as browser:
         try:
             browser.get(url)
         except WebDriverException as err:
             sys.exit(f"ERROR: {err}")
-        time.sleep(opts.timeout)
-        if opts.output:
-            opts.output.write(browser.page_source)
+        time.sleep(timeout)
+        if output_file:
+            output_file.write(browser.page_source)
         else:
             filename = os.path.basename(urlparse(url).path) or "index.html"
             if re.match("<(!DOCTYPE )?html", browser.page_source, re.I) and \
-                    not re.search(r"\.html?$", url, re.I):
+                    not re.search(r"\.html?$", filename, re.I):
                 filename = f"{filename}.html"
             with open(filename, "w", encoding="utf-8") as file:
                 file.write(browser.page_source)
@@ -54,13 +54,25 @@ def main():
     """
     Main function
     """
+    if not shutil.which("geckodriver"):
+        sys.exit("You must install geckodriver anywhere in your PATH", file=sys.stderr)
     if opts.output:
         if opts.output == "-":
             opts.output = sys.stdout
         else:
             opts.output = open(opts.output, "a", encoding="utf-8")  # pylint: disable=consider-using-with
-    with Executor() as executor:
-        executor.map(get, opts.url)
+    # ProcessPoolExecutor doesn't work well with lambda's
+    with ThreadPoolExecutor() as executor:
+        executor.map(
+            lambda url: xget(
+                url,
+                insecure=opts.insecure,
+                user_agent=opts.user_agent,
+                timeout=opts.timeout,
+                output_file=opts.output,
+            ),
+            opts.url,
+        )
 
 
 def parse_opts():
@@ -78,7 +90,7 @@ def parse_opts():
         '-O', '--output',
         help="output file")
     parser.add_argument(
-        '-t', '--timeout', type=int, default=2,
+        '-t', '--timeout', type=int, default=5,
         help="Timeout in seconds")
     parser.add_argument(
         '-U', '--user-agent',
