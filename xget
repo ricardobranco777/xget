@@ -8,7 +8,6 @@ import re
 import os
 import shutil
 import sys
-import time
 
 from concurrent.futures import ThreadPoolExecutor
 from subprocess import DEVNULL
@@ -16,6 +15,7 @@ from urllib.parse import urlparse
 
 from selenium.webdriver import firefox
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 def xget(url, insecure=False, user_agent=None, timeout=5, output_file=None):
@@ -36,9 +36,12 @@ def xget(url, insecure=False, user_agent=None, timeout=5, output_file=None):
     ) as browser:
         try:
             browser.get(url)
+            initial_content = browser.page_source
+            WebDriverWait(browser, timeout).until(
+                lambda driver: driver.page_source != initial_content
+            )
         except WebDriverException as err:
             sys.exit(f"ERROR: {err}")
-        time.sleep(timeout)
         if output_file:
             output_file.write(browser.page_source)
         else:
