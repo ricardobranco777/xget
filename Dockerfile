@@ -6,12 +6,7 @@ RUN	apk add --no-cache \
 		firefox-esr \
 		tzdata
 
-RUN	apk --no-cache --virtual .build-deps add \
-		gcc \
-                libc-dev \
-                libffi-dev && \
-	pip install --no-cache-dir -r /tmp/requirements.txt && \
-        apk del .build-deps
+RUN	pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz | tar zxf - -C /usr/local/bin/
 
