@@ -3,6 +3,8 @@
 # xget
 xget gets the HTML from dynamic webpages where curl & wget fail
 
+Docker image available at `ghcr.io/ricardobranco777/xget:latest`
+
 ## Usage:
 
 ```
