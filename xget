@@ -4,7 +4,6 @@ Get html from dynamic pages
 """
 
 import argparse
-import re
 import os
 import shutil
 import sys
@@ -45,10 +44,14 @@ def xget(url, insecure=False, user_agent=None, timeout=5, output_file=None):
         if output_file:
             output_file.write(browser.page_source)
         else:
-            filename = os.path.basename(urlparse(url).path) or "index.html"
-            if re.match("<(!DOCTYPE )?html", browser.page_source, re.I) and \
-                    not re.search(r"\.html?$", filename, re.I):
-                filename = f"{filename}.html"
+            url = urlparse(url)
+            filename = os.path.basename(url.path) or "index"
+            if url.query:
+                filename += f"?{url.query}"
+            filename = filename.replace(os.sep, "_")
+            content_type = browser.execute_script("return document.contentType;").split('/')[1]
+            if not filename.endswith(content_type):
+                filename = f"{filename}.{content_type}"
             with open(filename, "w", encoding="utf-8") as file:
                 file.write(browser.page_source)
 
