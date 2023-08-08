@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 
 from pyvirtualdisplay import Display
 from selenium.webdriver import firefox
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -46,10 +46,15 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
     ) as browser:
         try:
             browser.get(url)
-            initial_content = browser.page_source
+        except WebDriverException as err:
+            sys.exit(f"ERROR: {err}")
+        initial_content = browser.page_source
+        try:
             WebDriverWait(browser, timeout).until(
                 lambda driver: driver.page_source != initial_content
             )
+        except TimeoutException:
+            pass
         except WebDriverException as err:
             sys.exit(f"ERROR: {err}")
         if output_file:
