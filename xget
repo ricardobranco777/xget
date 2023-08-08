@@ -52,6 +52,12 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
             content_type = browser.execute_script("return document.contentType;").split('/')[1]
             if not filename.endswith(content_type):
                 filename = f"{filename}.{content_type}"
+            try_filename = filename
+            counter = 1
+            while os.path.exists(try_filename):
+                try_filename = f"{filename}.{counter}"
+                counter += 1
+            filename = try_filename
             with open(filename, "w", encoding="utf-8") as file:
                 file.write(browser.page_source)
 
