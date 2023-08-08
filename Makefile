@@ -10,4 +10,4 @@ flake8:
 
 .PHONY: pylint
 pylint:
-	@pylint --disable=line-too-long $(FILES)
+	@pylint --disable=line-too-long,too-many-arguments,too-many-locals $(FILES)
