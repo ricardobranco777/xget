@@ -87,6 +87,7 @@ def main():
     """
     Main function
     """
+    os.umask(0o077)
     if opts.output:
         if opts.output == "-":
             opts.output = sys.stdout
