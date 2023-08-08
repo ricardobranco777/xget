@@ -5,7 +5,9 @@ Get html from dynamic pages
 
 import argparse
 import os
+import shlex
 import shutil
+import subprocess
 import sys
 
 from concurrent.futures import ThreadPoolExecutor
@@ -15,6 +17,9 @@ from urllib.parse import urlparse
 from selenium.webdriver import firefox
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.ui import WebDriverWait
+
+
+VERSION = "1.1"
 
 
 def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_file=None):
@@ -62,12 +67,20 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
                 file.write(browser.page_source)
 
 
+def print_versions():
+    '''Print useful information for debugging'''
+    print(f'{os.path.basename(sys.argv[0])} {VERSION}')
+    print(f'Python {sys.version}')
+    print(subprocess.check_output(shlex.split("geckodriver --version")).decode("utf-8").splitlines()[0])
+    with open("/etc/os-release", encoding="utf-8") as file:
+        osrel = {k: v.strip('"') for k, v in [line.split('=') for line in file.read().splitlines()]}
+    print(osrel['NAME'], osrel['VERSION_ID'])
+
+
 def main():
     """
     Main function
     """
-    if not shutil.which("geckodriver"):
-        sys.exit("You must install geckodriver anywhere in your PATH", file=sys.stderr)
     if opts.output:
         if opts.output == "-":
             opts.output = sys.stdout
@@ -108,12 +121,22 @@ def parse_opts():
     parser.add_argument(
         '-U', '--user-agent',
         help="User agent")
-    parser.add_argument('url', nargs='+')
+    parser.add_argument(
+        '-V', '--version', action='store_true',
+        help="Show version and exit")
+    parser.add_argument('url', nargs='*')
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     opts = parse_opts()
+    if not shutil.which("geckodriver"):
+        sys.exit("You must install geckodriver anywhere in your PATH", file=sys.stderr)
+    if opts.version:
+        print_versions()
+        sys.exit(0)
+    if not opts.url:
+        sys.exit("Missing URL argument")
     try:
         main()
     except KeyboardInterrupt:

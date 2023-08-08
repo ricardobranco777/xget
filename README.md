@@ -8,12 +8,12 @@ Docker image available at `ghcr.io/ricardobranco777/xget:latest`
 ## Usage:
 
 ```
-usage: xget [-h] [--debug] [--insecure] [-O OUTPUT] [-t TIMEOUT] [-U USER_AGENT] url [url ...]
+usage: xget [-h] [--debug] [--insecure] [-O OUTPUT] [-t TIMEOUT] [-U USER_AGENT] [--version] url [url ...]
 
 positional arguments:
   url
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --debug               Enable debug
   --insecure            Allow insecure server connections when using SSL
@@ -23,6 +23,7 @@ optional arguments:
                         Timeout in seconds
   -U USER_AGENT, --user-agent USER_AGENT
                         User agent
+  -V, --version         Show version and exit
 ```
 
 ## Requirements
