@@ -3,8 +3,9 @@ FROM	python:3.11-alpine
 COPY    requirements.txt /tmp
 
 RUN	apk add --no-cache \
-		firefox-esr \
-		tzdata
+		firefox \
+		tzdata \
+		xvfb
 
 RUN	pip install --no-cache-dir -r /tmp/requirements.txt
 
@@ -12,8 +13,7 @@ RUN	wget -q -O- https://github.com/mozilla/geckodriver/releases/download/v0.33.0
 
 COPY	xget /
 
-ENV     PYTHONPATH .
-ENV	PYTHONUNBUFFERED 1
+ENV	DBUS_SESSION_BUS_ADDRESS /dev/null
 
 RUN	adduser -D user
 WORKDIR	/home/test
