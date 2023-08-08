@@ -28,6 +28,10 @@ options:
 
 ## Requirements
 
+- Docker or Podman for the Docker image
+
+Otherwise:
+
 - Tested on Python 3.8+
-- Python Selenium
-- Geckodriver
+- [Selenium](https://pypi.org/project/selenium/)
+- Latest [geckodriver](https://github.com/mozilla/geckodriver/releases)
