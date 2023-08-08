@@ -11,3 +11,7 @@ flake8:
 .PHONY: pylint
 pylint:
 	@pylint --disable=line-too-long,too-many-arguments,too-many-locals $(FILES)
+
+.PHONY: e2e
+e2e:
+	@bash tests/e2e.sh
