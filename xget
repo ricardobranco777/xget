@@ -11,7 +11,6 @@ import subprocess
 import sys
 
 from concurrent.futures import ThreadPoolExecutor
-from subprocess import DEVNULL
 from urllib.parse import urlparse
 
 from pyvirtualdisplay import Display
@@ -34,7 +33,7 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
     """
     if not urlparse(url).scheme:
         url = f"https://{url}"
-    service = firefox.service.Service(log_output=sys.stderr if debug else DEVNULL)
+    service = firefox.service.Service(log_output=sys.stderr if debug else subprocess.DEVNULL)
     options = firefox.options.Options()
     options.add_argument("--headless")
     if user_agent is not None:
