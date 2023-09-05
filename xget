@@ -142,7 +142,7 @@ def parse_opts():
 if __name__ == "__main__":
     opts = parse_opts()
     if not shutil.which("geckodriver"):
-        sys.exit("You must install geckodriver anywhere in your PATH", file=sys.stderr)
+        sys.exit("You must install geckodriver anywhere in your PATH")
     if opts.version:
         print_versions()
         sys.exit(0)

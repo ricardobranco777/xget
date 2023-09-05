@@ -8,6 +8,10 @@ all: flake8 pylint
 flake8:
 	@flake8 --ignore=E501 $(FILES)
 
+.PHONY: mypy
+mypy:
+	@mypy $(FILES)
+
 .PHONY: pylint
 pylint:
 	@pylint --disable=line-too-long,too-many-arguments,too-many-locals $(FILES)
