@@ -92,7 +92,7 @@ def main():
     Main function
     """
     os.umask(0o077)
-    if opts.output:
+    if opts.output:  # pylint: disable=used-before-assignment
         if opts.output == "-":
             opts.output = sys.stdout
         else:
