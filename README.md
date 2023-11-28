@@ -1,7 +1,7 @@
 ![Build Status](https://github.com/ricardobranco777/xget/actions/workflows/ci.yml/badge.svg)
 
 # xget
-xget gets the HTML from dynamic webpages where curl & wget fail
+xget gets content from dynamic webpages where curl & wget fail
 
 Docker image available at `ghcr.io/ricardobranco777/xget:latest`
 
