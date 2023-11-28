@@ -15,15 +15,15 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --debug               Enable debug
-  --insecure            Allow insecure server connections when using SSL
+  --debug               enable debug (default: False)
+  --insecure            allow insecure server connections when using SSL (default: False)
   -O OUTPUT, --output OUTPUT
-                        output file
+                        output file (default: None)
   -t TIMEOUT, --timeout TIMEOUT
-                        Timeout in seconds
+                        timeout in seconds (default: 5)
   -U USER_AGENT, --user-agent USER_AGENT
-                        User agent
-  -V, --version         Show version and exit
+                        user agent (default: None)
+  --version             show program's version number and exit
 ```
 
 ## Requirements

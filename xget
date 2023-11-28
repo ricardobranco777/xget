@@ -5,7 +5,6 @@ Get html from dynamic pages
 
 import argparse
 import os
-import shlex
 import shutil
 import subprocess
 import sys
@@ -23,26 +22,27 @@ VERSION = "1.3"
 
 
 def is_container() -> bool:
-    '''Returns True if we're inside a Podman/Docker container, False otherwise.'''
+    """Returns True if we're inside a Podman/Docker container, False otherwise."""
     return os.getenv("container") == "podman" or os.path.isfile("/.dockerenv")
 
 
-def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_file=None):
+def xget(
+    url, debug=False, insecure=False, user_agent=None, timeout=5, output_file=None
+) -> None:
     """
     Get url
     """
     if not urlparse(url).scheme:
         url = f"https://{url}"
-    service = firefox.service.Service(log_output=sys.stderr if debug else subprocess.DEVNULL)
+    service = firefox.service.Service(
+        log_output=sys.stderr if debug else subprocess.DEVNULL
+    )
     options = firefox.options.Options()
     options.add_argument("--headless")
     if user_agent is not None:
         options.set_preference("general.useragent.override", user_agent)
     options.accept_untrusted_certs = insecure
-    with firefox.webdriver.WebDriver(
-            options=options,
-            service=service
-    ) as browser:
+    with firefox.webdriver.WebDriver(options=options, service=service) as browser:
         try:
             browser.get(url)
         except WebDriverException as err:
@@ -64,7 +64,9 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
             if url.query:
                 filename += f"?{url.query}"
             filename = filename.replace(os.sep, "_")
-            content_type = browser.execute_script("return document.contentType;").split('/')[1]
+            content_type = browser.execute_script("return document.contentType;").split(
+                "/"
+            )[1]
             if not filename.endswith(content_type):
                 filename = f"{filename}.{content_type}"
             try_filename = filename
@@ -77,16 +79,6 @@ def xget(url, debug=False, insecure=False, user_agent=None, timeout=5, output_fi
                 file.write(browser.page_source)
 
 
-def print_versions():
-    '''Print useful information for debugging'''
-    print(f'{os.path.basename(sys.argv[0])} {VERSION}')
-    print(f'Python {sys.version}')
-    print(subprocess.check_output(shlex.split("geckodriver --version")).decode("utf-8").splitlines()[0])
-    with open("/etc/os-release", encoding="utf-8") as file:
-        osrel = {k: v.strip('"') for k, v in [line.split('=') for line in file.read().splitlines()]}
-    print(osrel['NAME'], osrel['VERSION_ID'])
-
-
 def main():
     """
     Main function
@@ -96,7 +88,9 @@ def main():
         if opts.output == "-":
             opts.output = sys.stdout
         else:
-            opts.output = open(opts.output, "a", encoding="utf-8")  # pylint: disable=consider-using-with
+            opts.output = open(  # pylint: disable=consider-using-with
+                opts.output, "a", encoding="utf-8"
+            )
     # ProcessPoolExecutor doesn't work well with lambda's
     with ThreadPoolExecutor() as executor:
         executor.map(
@@ -116,26 +110,22 @@ def parse_opts():
     """
     Parse options and arguments
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("--debug", action="store_true", help="enable debug")
     parser.add_argument(
-        '--debug', action='store_true',
-        help="Enable debug")
+        "--insecure",
+        action="store_true",
+        help="allow insecure server connections when using SSL",
+    )
+    parser.add_argument("-O", "--output", help="output file")
     parser.add_argument(
-        '--insecure', action='store_true',
-        help="Allow insecure server connections when using SSL")
-    parser.add_argument(
-        '-O', '--output',
-        help="output file")
-    parser.add_argument(
-        '-t', '--timeout', type=int, default=5,
-        help="Timeout in seconds")
-    parser.add_argument(
-        '-U', '--user-agent',
-        help="User agent")
-    parser.add_argument(
-        '-V', '--version', action='store_true',
-        help="Show version and exit")
-    parser.add_argument('url', nargs='*')
+        "-t", "--timeout", type=int, default=5, help="timeout in seconds"
+    )
+    parser.add_argument("-U", "--user-agent", help="user agent")
+    parser.add_argument("--version", action="version", version=VERSION)
+    parser.add_argument("url", nargs="+")
     return parser.parse_args()
 
 
@@ -143,9 +133,6 @@ if __name__ == "__main__":
     opts = parse_opts()
     if not shutil.which("geckodriver"):
         sys.exit("You must install geckodriver anywhere in your PATH")
-    if opts.version:
-        print_versions()
-        sys.exit(0)
     if not opts.url:
         sys.exit("Missing URL argument")
     try:
