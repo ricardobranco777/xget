@@ -41,7 +41,7 @@ def xget(
     options.add_argument("--headless")
     if user_agent is not None:
         options.set_preference("general.useragent.override", user_agent)
-    options.accept_untrusted_certs = insecure
+    options.accept_insecure_certs = insecure
     with firefox.webdriver.WebDriver(options=options, service=service) as browser:
         try:
             browser.get(url)
