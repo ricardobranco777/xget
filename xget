@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, ParseResult
 
 from pyvirtualdisplay import Display
 from selenium.webdriver import firefox
@@ -27,7 +27,7 @@ def is_container() -> bool:
 
 
 def xget(
-    url,
+    url: str | ParseResult,
     debug: bool = False,
     insecure: bool = False,
     user_agent: str | None = None,
@@ -37,6 +37,7 @@ def xget(
     """
     Get url
     """
+    assert isinstance(url, str)
     if not urlparse(url).scheme:
         url = f"https://{url}"
     service = firefox.service.Service(
