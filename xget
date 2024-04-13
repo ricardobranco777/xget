@@ -27,7 +27,12 @@ def is_container() -> bool:
 
 
 def xget(
-    url, debug=False, insecure=False, user_agent=None, timeout=5, output_file=None
+    url,
+    debug: bool = False,
+    insecure: bool = False,
+    user_agent: str | None = None,
+    timeout: int = 5,
+    output_file: str | None = None,
 ) -> None:
     """
     Get url
@@ -78,9 +83,9 @@ def xget(
                 if url.query:
                     filename += f"?{url.query}"
                 filename = filename.replace(os.sep, "_")
-                content_type = browser.execute_script("return document.contentType;").split(
-                    "/"
-                )[1]
+                content_type = browser.execute_script(
+                    "return document.contentType;"
+                ).split("/")[1]
                 if not filename.endswith(content_type):
                     filename = f"{filename}.{content_type}"
                 try_filename = filename
@@ -93,7 +98,7 @@ def xget(
                 file.write(browser.page_source)
 
 
-def main():
+def main() -> None:
     """
     Main function
     """
@@ -109,7 +114,7 @@ def main():
         )
 
 
-def parse_opts():
+def parse_opts() -> argparse.Namespace:
     """
     Parse options and arguments
     """

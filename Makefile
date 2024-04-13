@@ -1,8 +1,7 @@
-BIN=xget
-FILES=$(BIN)
+FILES=xget
 
 .PHONY: all
-all: flake8 pylint
+all: flake8 pylint mypy black
 
 .PHONY: flake8
 flake8:
@@ -15,6 +14,10 @@ mypy:
 .PHONY: pylint
 pylint:
 	@pylint --disable=line-too-long,too-many-arguments,too-many-locals $(FILES)
+
+.PHONY: black
+black:
+	@black --check $(FILES)
 
 .PHONY: e2e
 e2e:
