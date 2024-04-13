@@ -1,8 +1,7 @@
-BIN=xget
-FILES=$(BIN)
+FILES=xget
 
 .PHONY: all
-all: flake8 pylint
+all: flake8 pylint mypy black geckodriver
 
 .PHONY: flake8
 flake8:
@@ -16,6 +15,14 @@ mypy:
 pylint:
 	@pylint --disable=line-too-long,too-many-arguments,too-many-locals $(FILES)
 
+.PHONY: black
+black:
+	@black --check $(FILES)
+
 .PHONY: e2e
 e2e:
 	@bash tests/e2e.sh
+
+.PHONY: geckodriver
+geckodriver:
+	@grep -q "geckodriver-$$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')" Dockerfile || echo Update Dockerfile with latest geckodriver

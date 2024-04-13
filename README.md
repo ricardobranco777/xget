@@ -32,6 +32,6 @@ options:
 
 Otherwise:
 
-- Tested on Python 3.8+
+- Tested on Python 3.10+
 - [Selenium](https://pypi.org/project/selenium/)
 - Latest [geckodriver](https://github.com/mozilla/geckodriver/releases)
