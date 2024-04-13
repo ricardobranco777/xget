@@ -8,8 +8,8 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 
-from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 
 from pyvirtualdisplay import Display
@@ -42,39 +42,53 @@ def xget(
     if user_agent is not None:
         options.set_preference("general.useragent.override", user_agent)
     options.accept_insecure_certs = insecure
-    with firefox.webdriver.WebDriver(options=options, service=service) as browser:
-        try:
-            browser.get(url)
-        except WebDriverException as err:
-            sys.exit(f"ERROR: {err}")
-        initial_content = browser.page_source
-        try:
-            WebDriverWait(browser, timeout).until(
-                lambda driver: driver.page_source != initial_content
-            )
-        except TimeoutException:
-            pass
-        except WebDriverException as err:
-            sys.exit(f"ERROR: {err}")
-        if output_file:
-            output_file.write(browser.page_source)
-        else:
+
+    # Don't wait to download images, css, etc
+    options.page_load_strategy = "none"
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        options.set_preference("browser.download.dir", tmpdirname)
+        options.set_preference("browser.download.folderList", 2)
+
+        with firefox.webdriver.WebDriver(options=options, service=service) as browser:
+            try:
+                browser.get(url)
+            except WebDriverException as err:
+                sys.exit(f"ERROR: {err}")
             url = urlparse(url)
-            filename = os.path.basename(url.path) or "index"
-            if url.query:
-                filename += f"?{url.query}"
-            filename = filename.replace(os.sep, "_")
-            content_type = browser.execute_script("return document.contentType;").split(
-                "/"
-            )[1]
-            if not filename.endswith(content_type):
-                filename = f"{filename}.{content_type}"
-            try_filename = filename
-            counter = 1
-            while os.path.exists(try_filename):
-                try_filename = f"{filename}.{counter}"
-                counter += 1
-            filename = try_filename
+            initial_content = browser.page_source
+            try:
+                WebDriverWait(browser, timeout).until(
+                    lambda driver: driver.page_source != initial_content
+                )
+            except TimeoutException:
+                tmpdir_files = os.listdir(tmpdirname)
+                if len(tmpdir_files) == 1:
+                    filename = output_file or os.path.basename(url.path)
+                    shutil.move(os.path.join(tmpdirname, tmpdir_files.pop()), filename)
+                    return
+                assert len(tmpdir_files) != 0
+                raise
+            except WebDriverException as err:
+                sys.exit(f"ERROR: {err}")
+            if output_file:
+                filename = output_file
+            else:
+                filename = os.path.basename(url.path) or "index"
+                if url.query:
+                    filename += f"?{url.query}"
+                filename = filename.replace(os.sep, "_")
+                content_type = browser.execute_script("return document.contentType;").split(
+                    "/"
+                )[1]
+                if not filename.endswith(content_type):
+                    filename = f"{filename}.{content_type}"
+                try_filename = filename
+                counter = 1
+                while os.path.exists(try_filename):
+                    try_filename = f"{filename}.{counter}"
+                    counter += 1
+                filename = try_filename
             with open(filename, "w", encoding="utf-8") as file:
                 file.write(browser.page_source)
 
@@ -84,25 +98,14 @@ def main():
     Main function
     """
     os.umask(0o077)
-    if opts.output:  # pylint: disable=used-before-assignment
-        if opts.output == "-":
-            opts.output = sys.stdout
-        else:
-            opts.output = open(  # pylint: disable=consider-using-with
-                opts.output, "a", encoding="utf-8"
-            )
-    # ProcessPoolExecutor doesn't work well with lambda's
-    with ThreadPoolExecutor() as executor:
-        executor.map(
-            lambda url: xget(
-                url,
-                debug=opts.debug,
-                insecure=opts.insecure,
-                user_agent=opts.user_agent,
-                timeout=opts.timeout,
-                output_file=opts.output,
-            ),
-            opts.url,
+    for url in opts.url:
+        xget(
+            url,
+            debug=opts.debug,
+            insecure=opts.insecure,
+            user_agent=opts.user_agent,
+            timeout=opts.timeout,
+            output_file=opts.output,
         )
 
 
@@ -143,6 +146,3 @@ if __name__ == "__main__":
             main()
     except KeyboardInterrupt:
         sys.exit(1)
-    finally:
-        if opts.output:
-            opts.output.close()
