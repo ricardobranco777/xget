@@ -1,7 +1,7 @@
 FILES=xget
 
 .PHONY: all
-all: flake8 pylint mypy black
+all: flake8 pylint mypy black geckodriver
 
 .PHONY: flake8
 flake8:
@@ -22,3 +22,7 @@ black:
 .PHONY: e2e
 e2e:
 	@bash tests/e2e.sh
+
+.PHONY: geckodriver
+geckodriver:
+	@grep -q "geckodriver-$$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')" Dockerfile || echo Update Dockerfile with latest geckodriver
