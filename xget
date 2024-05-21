@@ -103,7 +103,9 @@ def main() -> None:
     """
     Main function
     """
-    os.umask(0o077)
+    opts = parse_opts()
+    if not opts.url:
+        sys.exit("Missing URL argument")
     for url in opts.url:
         xget(
             url,
@@ -139,11 +141,9 @@ def parse_opts() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    opts = parse_opts()
     if not shutil.which("geckodriver"):
         sys.exit("You must install geckodriver anywhere in your PATH")
-    if not opts.url:
-        sys.exit("Missing URL argument")
+    os.umask(0o077)
     try:
         if is_container():
             with Display():
