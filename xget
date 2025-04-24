@@ -26,7 +26,7 @@ def is_container() -> bool:
     return os.getenv("container") == "podman" or os.path.isfile("/.dockerenv")
 
 
-def xget(
+def xget(  # pylint: disable=too-many-positional-arguments
     url: str | ParseResult,
     debug: bool = False,
     insecure: bool = False,
